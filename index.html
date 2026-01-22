@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>LoannSMP - Site Officiel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="loading">
+    <!-- Floating Disclaimer -->
+    <div id="bannedDisclaimer" class="floating-disclaimer" onclick="toggleM('mBanned', true)">
+        <div class="disclaimer-content">
+            <span class="disclaimer-icon">🚫</span>
+            <span class="disclaimer-text">Liste des items bannis</span>
+        </div>
+    </div>
+
+    <!-- QoL ELEMENTS -->
+
+    <div id="bg-particles"></div>
+    <div id="toast-container"></div>
+    <button id="backToTop" onclick="window.scrollTo(0,0)">↑</button>
+
+    <section id="hero">
+        <div class="tilt-master" id="tilt">
+            <div class="card">
+                <div class="glare" id="glare"></div>
+
+                <div class="status-wrapper">
+                    <div class="status-pill" id="pillStatus">
+                        <div class="status-dot" id="statusDot"></div>
+                        <span id="statusText">Serveur hors-ligne</span>
+                    </div>
+                    <div class="status-pill" id="pillPlayers" style="display: none;">
+                        <div class="status-dot blue"></div>
+                        <span id="playerText">0 joueur</span>
+                    </div>
+                </div>
+
+                <div class="title-3d" id="animatedTitle"></div>
+                <p class="desc"></p>
+
+                <div class="btn-group">
+                    <button class="btn btn-main" onclick="toggleM('mDl', true)">
+                        <span>⬇️</span> TÉLÉCHARGER LE LAUNCHER
+                    </button>
+                    <div class="btn-row">
+                        <button class="btn btn-sec" onclick="toggleM('mWl', true)">✅ Whitelist</button>
+                        <button class="btn btn-sec" onclick="toggleM('mSug', true)">💡 Suggestions</button>
+                    </div>
+                </div>
+
+                <div class="ip-banner" onclick="copyIP()">
+                    <code id="serverIP">Chargement...</code>
+                    <span>Clique pour copier l'IP</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- MODALES -->
+    <div id="mDl" class="overlay" onclick="if(event.target === this) toggleM('mDl', false)">
+        <div class="modal modal-wide">
+            <div class="modal-content">
+                <div class="dl-header">
+                    <div class="launcher-icon">🚀</div>
+                    <h2 id="dlTitle" style="margin-bottom: 5px;">PRÊT À JOUER ?</h2>
+                    <p id="versionText" style="color: #666; font-size: 0.9rem;">Choisis ta version et télécharge le
+                        launcher !</p>
+                </div>
+
+                <div class="dl-body-wrapper"
+                    style="display: flex; gap: 30px; align-items: flex-start; margin-top: 20px;">
+                    <div class="dl-left" style="flex: 1.2;">
+                        <div class="dl-portal" style="display: flex; flex-direction: column; gap: 12px;">
+                            <div class="dl-card" id="optStable" onclick="selectVersion('stable')"
+                                style="padding: 15px;">
+                                <div class="dl-card-content">
+                                    <div class="dl-card-info">
+                                        <span class="badge" style="font-size: 0.6rem;">RECOMMANDÉ</span>
+                                        <h3 style="font-size: 1.1rem; margin: 4px 0;">Dernière Version (.exe)</h3>
+                                        <p style="font-size: 0.8rem;">Windows 10+ | 32-64 bits</p>
+                                    </div>
+                                    <div class="dl-card-arrow" style="font-size: 1.2rem;">→</div>
+                                </div>
+                            </div>
+
+                            <div class="dl-card disabled" style="padding: 15px; opacity: 0.4;">
+                                <div class="dl-card-content">
+                                    <div class="dl-card-info">
+                                        <span class="badge"
+                                            style="background: #333; color: #888; font-size: 0.6rem;">BIENTÔT</span>
+                                        <h3 style="font-size: 1.1rem; margin: 4px 0; color: #666;">Dernière Version (.exe) | Debug</h3>
+                                        <p style="font-size: 0.8rem;">???</p>
+                                    </div>
+                                    <div class="dl-card-arrow" style="font-size: 1.2rem;">🔒</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-buttons" style="margin-top: 20px; display: flex; gap: 10px;">
+                            <a id="finalDlBtn" href="#" class="btn btn-main btn-disabled"
+                                style="flex: 2; padding: 12px; font-size: 0.85rem;" onclick="startDownload()">
+                                TÉLÉCHARGER
+                            </a>
+                            <button class="btn btn-sec" style="flex: 1; padding: 12px; font-size: 0.85rem;"
+                                onclick="toggleM('mDl', false)">
+                                FERMER
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="dl-right"
+                        style="flex: 0.8; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                        <img src="preview.png" alt="Preview"
+                            style="width: 100%; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
+                        <p style="font-size: 0.75rem; color: #555; font-style: italic;">Aperçu du Launcher</p>
+                    </div>
+                </div>
+
+                <div class="dl-footer" style="margin-top: 25px; text-align: center;">
+                    <a href="https://github.com/LoannDev/LoannSMPLauncher/releases" target="_blank" class="github-link"
+                        style="opacity: 0.6; font-size: 0.85rem; transition: opacity 0.3s;"
+                        onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6">
+                        Voir toutes les versions sur GitHub →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALE WHITELIST -->
+    <div class="overlay" id="mWl" onclick="if(event.target==this) toggleM('mWl', false)">
+        <div class="modal">
+            <h2 style="color:var(--orange); font-weight:900; margin-bottom:20px;">WHITELIST</h2>
+            <form id="formWl">
+                <label style="font-size:0.75rem; color:#666;">PSEUDO MINECRAFT</label>
+                <input type="text" class="field" id="wl_mc" required placeholder="Votre pseudo en Jeu">
+
+                <label style="font-size:0.75rem; color:#666;">PSEUDO DISCORD</label>
+                <input type="text" class="field" id="wl_discord" required placeholder="Votre pseudo Discord">
+
+                <label style="font-size:0.75rem; color:#666;">POURQUOI NOUS REJOINDRE ?</label>
+                <textarea class="field" id="wl_why" style="height:120px; resize:none;" required
+                    placeholder="Je suis un femboy..."></textarea>
+
+                <div class="pg-container">
+                    <div class="pg-bar" id="pbar"></div>
+                </div>
+                <p id="pcount" style="font-size:0.7rem; color:#444; text-align:right; margin-bottom:20px;">0
+                    / 100</p>
+
+                <div style="display:flex; gap:12px;">
+                    <button type="button" class="btn btn-sec" style="flex:1"
+                        onclick="toggleM('mWl', false)">ANNULER</button>
+                    <button type="submit" class="btn btn-main" style="flex:2" id="subWl" disabled>ENVOYER LA
+                        DEMANDE</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="overlay" id="mSug" onclick="if(event.target==this) toggleM('mSug', false)">
+        <div class="modal">
+            <h2 style="color:var(--orange); font-weight:900; margin-bottom:20px;">PROPOSER UNE IDÉE</h2>
+            <form id="formSug">
+                <label style="font-size:0.75rem; color:#666;">VOTRE PSEUDO</label>
+                <input type="text" class="field" id="sug_pseudo" required placeholder="Pseudo Discord">
+
+                <label style="font-size:0.75rem; color:#666;">VOTRE SUGGESTION</label>
+                <textarea class="field" id="sug_val" style="height:150px; resize:none;" required
+                    placeholder="Décrivez votre idée en détails..."></textarea>
+
+                <div style="display:flex; gap:12px;">
+                    <button type="button" class="btn btn-sec" style="flex:1"
+                        onclick="toggleM('mSug', false)">RETOUR</button>
+                    <button type="submit" class="btn btn-main" style="flex:2">ENVOYER L'IDÉE</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODALE ITEMS BANNIS -->
+    <div class="overlay" id="mBanned" onclick="if(event.target==this) toggleM('mBanned', false)">
+        <div class="modal">
+            <h2 style="color:#ff4444; font-weight:900; margin-bottom:20px;">ITEMS BANNIS</h2>
+            <div
+                style="text-align: left; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,68,68,0.2);">
+                <p style="margin-bottom: 15px; font-size: 0.9rem; color: #888;">Ces items sont interdits afin d'éviter
+                    les items trop forts et les abus.</p>
+                <div
+                    style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-family: var(--mono); font-size: 0.85rem;">
+                    <div style="color: #ffaa00;">• ???</div>
+                    <div style="color: #ffaa00;">• ???</div>
+                    <div style="color: #ffaa00;">• ???</div>
+                    <div style="color: #ffaa00;">• ???</div>
+                </div>
+                <p style="margin-top: 15px; font-size: 0.8rem; color: #424141; font-style: italic">
+                    * D'autres items peuvent être ajoutés à cette liste si nécessaire, pensez à la vérifier
+                    régulièrement.
+                    L'utilisation de ces items entrainera un bannissement temporaire ou définitif en fonction de la
+                    gravité. Merci de respecter ces règles qui sont les seules.</p>
+            </div>
+            <button class="btn btn-sec" style="margin-top: 25px; width: 100%;"
+                onclick="toggleM('mBanned', false)">RETOUR</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
