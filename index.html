@@ -10,18 +10,111 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@700&display=swap"
         rel="stylesheet">
+    <style>
+        /* Styles pour la nouvelle modale de commande */
+        .debug-modal-content {
+            background: #111;
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 165, 0, 0.5);
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* Animation d'ouverture du popup */
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-wide-debug {
+            max-width: 800px; 
+            width: 90%;
+            animation: modalFadeIn 0.3s ease-out forwards;
+        }
+
+        /* FORCE LA FERMETURE INSTANTANÉE POUR CETTE MODALE */
+        #mDebugCmd {
+            transition: none !important;
+        }
+
+        .command-box {
+            background: #000;
+            padding: 18px 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            border: 1px solid #222;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .command-box::before {
+            content: "POWERSHELL";
+            position: absolute;
+            top: 0;
+            left: 10px;
+            font-size: 0.6rem;
+            color: #444;
+            font-weight: bold;
+        }
+
+        .command-text {
+            font-family: 'JetBrains Mono', monospace;
+            color: #00ffaa;
+            font-size: 0.95rem;
+            white-space: nowrap; 
+            text-align: left;
+            overflow-x: auto;
+            scrollbar-width: none; 
+        }
+        
+        .command-text::-webkit-scrollbar { display: none; } 
+
+        #copyBtnDebug {
+            background: var(--orange);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: 900;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(255, 165, 0, 0.2);
+        }
+
+        #copyBtnDebug:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        /* Contour orange pour la sélection de méthode */
+        .dl-card {
+            border: 2px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .dl-card.active {
+            border-color: var(--orange) !important;
+            box-shadow: 0 8px 25px rgba(255, 165, 0, 0.2);
+            background: rgba(255, 165, 0, 0.08);
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 
 <body class="loading">
-    <!-- Floating Disclaimer -->
     <div id="bannedDisclaimer" class="floating-disclaimer" onclick="toggleM('mBanned', true)">
         <div class="disclaimer-content">
             <span class="disclaimer-icon">🚫</span>
             <span class="disclaimer-text">Liste des items bannis</span>
         </div>
     </div>
-
-    <!-- QoL ELEMENTS -->
 
     <div id="bg-particles"></div>
     <div id="toast-container"></div>
@@ -65,7 +158,6 @@
     </section>
 
 
-    <!-- MODALES -->
     <div id="mDl" class="overlay" onclick="if(event.target === this) toggleM('mDl', false)">
         <div class="modal modal-wide">
             <div class="modal-content">
@@ -92,22 +184,22 @@
                                 </div>
                             </div>
 
-                            <div class="dl-card disabled" style="padding: 15px; opacity: 0.4;">
+                            <div class="dl-card" id="optDebug" onclick="selectVersion('debug')" style="padding: 15px;">
                                 <div class="dl-card-content">
                                     <div class="dl-card-info">
                                         <span class="badge"
-                                            style="background: #333; color: #888; font-size: 0.6rem;">BIENTÔT</span>
-                                        <h3 style="font-size: 1.1rem; margin: 4px 0; color: #666;">Dernière Version (.exe) | Debug</h3>
-                                        <p style="font-size: 0.8rem;">???</p>
+                                            style="background: #ff4444; color: #fff; font-size: 0.6rem;">DEBUG / LINUX</span>
+                                        <h3 style="font-size: 1.1rem; margin: 4px 0; color: #fff;">Installation par Script</h3>
+                                        <p style="font-size: 0.8rem;">Installe le code et l'éxécute, tout en affichant la console et sans l'instabilité du compileur pour le .exe</p>
                                     </div>
-                                    <div class="dl-card-arrow" style="font-size: 1.2rem;">🔒</div>
+                                    <div class="dl-card-arrow" style="font-size: 1.2rem;">→</div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="modal-buttons" style="margin-top: 20px; display: flex; gap: 10px;">
                             <a id="finalDlBtn" href="#" class="btn btn-main btn-disabled"
-                                style="flex: 2; padding: 12px; font-size: 0.85rem;" onclick="startDownload()">
+                                style="flex: 2; padding: 12px; font-size: 0.85rem;" onclick="handleMainButtonClick()">
                                 TÉLÉCHARGER
                             </a>
                             <button class="btn btn-sec" style="flex: 1; padding: 12px; font-size: 0.85rem;"
@@ -136,7 +228,30 @@
         </div>
     </div>
 
-    <!-- MODALE WHITELIST -->
+    <div id="mDebugCmd" class="overlay" onclick="if(event.target === this) toggleM('mDebugCmd', false)">
+        <div class="modal modal-wide-debug">
+            <div class="debug-modal-content">
+                <h2 style="color:var(--orange); font-weight:900; letter-spacing: 1px;">Installation Linux / Debug</h2>
+                <p style="font-size: 0.9rem; color: #888; margin-top: 10px;">Copie la commande et utilise la dans le terminal.</p>
+                <p style="font-size: 0.8rem; color: #555; font-style: italic; margin-bottom: 20px;">(Pour la seule personne qui utilise Linux, aka "maxime", il faut installer PowerShell sinon ça fonctionne pas)</p>
+                
+                <div class="command-box">
+                    <code class="command-text" id="rawCommand">powershell "irm https://is.gd/debug_launcher | iex"</code>
+                    <button id="copyBtnDebug" onclick="copyDebugCommand()">COPIER</button>
+                </div>
+
+                <p style="font-size: 0.8rem; color: #444; margin-bottom: 15px;">Si tu veux savoir ce que ça fait, ça va à l'URL https://is.gd/debug_launcher, récupère le code et l'éxécute. Tu peux voir le code en allant sur l'URL. Le code vérifie si tu as Python d'installé, les dépendances, et installe le Launcher (python) et l'éxécute.</p>
+
+                <div style="display: flex; justify-content: center;">
+                   <button type="button" class="btn btn-sec" style="min-width: 200px;" 
+                           onclick="document.getElementById('mDebugCmd').style.display='none'; toggleM('mDebugCmd', false)">
+                        RETOUR
+                   </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="overlay" id="mWl" onclick="if(event.target==this) toggleM('mWl', false)">
         <div class="modal">
             <h2 style="color:var(--orange); font-weight:900; margin-bottom:20px;">WHITELIST</h2>
@@ -187,7 +302,6 @@
         </div>
     </div>
 
-    <!-- MODALE ITEMS BANNIS -->
     <div class="overlay" id="mBanned" onclick="if(event.target==this) toggleM('mBanned', false)">
         <div class="modal">
             <h2 style="color:#ff4444; font-weight:900; margin-bottom:20px;">ITEMS BANNIS</h2>
@@ -214,6 +328,55 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+        // Logique spécifique pour la version Debug
+        let selectedType = null;
+
+        function selectVersion(type) {
+            selectedType = type;
+            const btn = document.getElementById('finalDlBtn');
+            const cards = document.querySelectorAll('.dl-card');
+            
+            cards.forEach(c => c.classList.remove('active'));
+            
+            const targetId = type === 'stable' ? 'optStable' : 'optDebug';
+            document.getElementById(targetId).classList.add('active');
+            
+            btn.classList.remove('btn-disabled');
+            
+            if(type === 'debug') {
+                btn.innerText = "VOIR LA COMMANDE";
+            } else {
+                btn.innerText = "TÉLÉCHARGER";
+            }
+        }
+
+        function handleMainButtonClick() {
+            if(!selectedType) return;
+            
+            if(selectedType === 'debug') {
+                toggleM('mDebugCmd', true);
+            } else {
+                if(typeof startDownload === "function") startDownload();
+            }
+        }
+
+        function copyDebugCommand() {
+            const cmd = document.getElementById('rawCommand').innerText;
+            const btn = document.getElementById('copyBtnDebug');
+            
+            navigator.clipboard.writeText(cmd).then(() => {
+                btn.innerText = "COPIÉ !";
+                btn.style.background = "#00ff00";
+                btn.style.boxShadow = "0 0 15px rgba(0, 255, 0, 0.3)";
+                setTimeout(() => {
+                    btn.innerText = "COPIER";
+                    btn.style.background = "var(--orange)";
+                    btn.style.boxShadow = "0 4px 10px rgba(255, 165, 0, 0.2)";
+                }, 2000);
+            });
+        }
+    </script>
 </body>
 
 </html>
