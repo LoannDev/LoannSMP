@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - LoannSMP</title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --orange: #ffa500;
+            --bg-dark: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 60px 20px;
+        }
+
+        .faq-container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header-section h1 {
+            font-weight: 900;
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            letter-spacing: -3px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #fff 0%, #444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .category-title {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--orange);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 40px 0 20px 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-title::after {
+            content: "";
+            height: 1px;
+            flex-grow: 1;
+            background: linear-gradient(90deg, rgba(255,165,0,0.3), transparent);
+        }
+
+        .faq-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .faq-item:hover {
+            border-color: rgba(255, 165, 0, 0.4);
+            background: rgba(255, 165, 0, 0.02);
+        }
+
+        .faq-toggle { display: none; }
+
+        .faq-question {
+            padding: 22px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.05rem;
+            user-select: none;
+        }
+
+        .faq-question::after {
+            content: "→";
+            color: var(--orange);
+            font-family: 'JetBrains Mono';
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .faq-toggle:checked + .faq-question::after {
+            transform: rotate(90deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease-out;
+            opacity: 0;
+            color: #aaa;
+            line-height: 1.7;
+            font-size: 0.95rem;
+            padding: 0 25px;
+        }
+
+        .faq-toggle:checked ~ .faq-answer {
+            max-height: 400px;
+            padding-bottom: 25px;
+            opacity: 1;
+        }
+
+        .highlight { color: #fff; font-weight: 600; }
+        .orange-link { color: var(--orange); text-decoration: none; border-bottom: 1px solid transparent; transition: 0.2s; }
+        .orange-link:hover { border-bottom-color: var(--orange); }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: #00ffaa;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="faq-container">
+        <div class="header-section">
+            <h1>F.A.Q.</h1>
+            <p style="color: #666; font-size: 1.1rem;">Pratiquement toutes vos questions sont ici je crois</p>
+        </div>
+
+        <div class="category-title">Launcher</div>
+
+        <div class="faq-item">
+            <input type="checkbox" id="q_safe" class="faq-toggle">
+            <label for="q_safe" class="faq-question">Est-ce que le Launcher est safe ?</label>
+            <div class="faq-answer">
+                <span class="highlight">Oui.</span> Le launcher est codé en Python, puis compilé en .exe pour Windows. Il est open-source, tu peux retrouver le code ici : <a href="https://github.com/LoannDev/LoannSMPLauncher" target="_blank" class="orange-link">LoannSMP Launcher</a>. Tu peux copier le code du fichier Python ou le copier dans une IA pour vérifier et être sûr à 100%. Tu peux même compiler le fichier toi-même, toutes les instructions sont sur le GitHub.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <input type="checkbox" id="q_open" class="faq-toggle">
+            <label for="q_open" class="faq-question">Windows indique que cet application n'est pas fiable</label>
+            <div class="faq-answer">
+                C'est normal. Windows indique ce message car l'application n'est pas signée numériquement. Pour éviter ce message, il faudrait que je paye un certificat de signature de code, ce qui coûte plusieurs centaines d'euros par an, et je ne pense pas que ça en vaille la peine pour un launcher de serveur Minecraft. Tu peux simplement cliquer sur "Informations complémentaires" puis "Exécuter quand même" pour lancer le launcher sans problème.
+                </div>
+        </div>
+
+        <div class="faq-item">
+            <input type="checkbox" id="q_req" class="faq-toggle">
+            <label for="q_req" class="faq-question">Pourquoi un Launcher ?</label>
+            <div class="faq-answer">
+                Alors là c'est une très bonne question. Avant, on utilisait TLauncher, mais il a été considéré comme <span class="highlight">spyware</span> par certains utilisateurs, et donc j'ai fait en Python ce launcher cracké custom, et c'est aussi bien plus facile car il télécharge et met à jour automatiquement le modpack, et en gros il faut juste lancer un <span class="highlight">.exe</span> et c'est bon, pas besoin de se prendre la tête à installer Forge, les mods, etc...
+            </div>
+        </div>
+
+
+
+
+
+        <div class="category-title">Le Serveur</div>
+
+        <div class="faq-item">
+            <input type="checkbox" id="q_rejoin" class="faq-toggle">
+            <label for="q_rejoin" class="faq-question">Comment rejoindre le serveur ?</label>
+            <div class="faq-answer">
+                C'est simple, il suffit de télécharger le Launcher, le lancer, installer les mods, mettre un pseudo et lancer le jeu !
+            </div>
+        </div>
+
+        <div class="category-title">Support & Aide</div>
+
+        <div class="faq-item">
+            <input type="checkbox" id="q_bug" class="faq-toggle">
+            <label for="q_bug" class="faq-question">Mon launcher ne se lance pas / crash</label>
+            <div class="faq-answer">
+                <span class="highlight">Si ton launcher ne se lance pas, essaie de suivre ses étapes pour voir si ça fonctionne ou si t'as la flemme passe direct à l'étape 3</span><br><br>
+                1. Assure-toi d'avoir installé la dernière version de Java (Java 17+ de préférence). Tu peux la télécharger ici : <a href="https://www.java.com/fr/download/" target="_blank" class="orange-link">Télécharger Java</a> (je n'ai pas essayé mais c'est peut-être ça)<br><br>
+                2. Assure-toi que ton antivirus ne bloque pas le launcher. Parfois, les antivirus peuvent détecter à tort le launcher comme une menace, car un fichier Python compilé en .exe est souvent flag, même si c'est pas toujours le cas. Essaie de désactiver temporairement ton antivirus ou d'ajouter une exception pour le launcher.<br><br>
+                3. Si l'erreur persiste, utilise la méthode <span class="highlight">Installation par Script</span> disponible sur la page d'accueil. Elle affichera une console qui nous permettra de diagnostiquer l'erreur précise.
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
