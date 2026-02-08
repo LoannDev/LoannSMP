@@ -105,6 +105,47 @@
             background: rgba(255, 165, 0, 0.08);
             transform: translateY(-2px);
         }
+
+        /* Style pour le bouton FAQ flottant */
+        .faq-floating-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            z-index: 9999;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .faq-floating-btn:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 165, 0, 0.1);
+            border-color: var(--orange);
+            box-shadow: 0 15px 40px rgba(255, 165, 0, 0.2);
+        }
+
+
+
+        @media (max-width: 768px) {
+            .faq-floating-btn {
+                bottom: 20px;
+                right: 20px;
+                padding: 10px 15px;
+            }
+        }
     </style>
 </head>
 
@@ -198,8 +239,8 @@
                         </div>
 
                         <div class="modal-buttons" style="margin-top: 20px; display: flex; gap: 10px;">
-                            <a id="finalDlBtn" href="#" class="btn btn-main btn-disabled"
-                                style="flex: 2; padding: 12px; font-size: 0.85rem;" onclick="handleMainButtonClick()">
+                            <a id="finalDlBtn" href="LauncherB1.exe" download class="btn btn-main btn-disabled"
+                                style="flex: 2; padding: 12px; font-size: 0.85rem;" onclick="handleMainButtonClick(event)">
                                 TÉLÉCHARGER
                             </a>
                             <button class="btn btn-sec" style="flex: 1; padding: 12px; font-size: 0.85rem;"
@@ -327,6 +368,11 @@
         </div>
     </div>
 
+    <a href="https://loanndev.github.io/LoannSMP/faq/" target="_blank" class="faq-floating-btn">
+        <span class="faq-icon">📂</span>
+        <span class="faq-text">FAQ (important !!)</span>
+    </a>
+
     <script src="script.js"></script>
     <script>
         // Logique spécifique pour la version Debug
@@ -351,12 +397,17 @@
             }
         }
 
-        function handleMainButtonClick() {
-            if(!selectedType) return;
+        function handleMainButtonClick(event) {
+            if(!selectedType) {
+                event.preventDefault();
+                return;
+            }
             
             if(selectedType === 'debug') {
+                event.preventDefault();
                 toggleM('mDebugCmd', true);
             } else {
+                // Pour la version stable, on laisse le comportement par défaut de l'ancre (téléchargement)
                 if(typeof startDownload === "function") startDownload();
             }
         }
